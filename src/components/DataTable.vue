@@ -2,13 +2,14 @@
   <table class="bc-data-table">
     <thead class="bc-table-header">
       <tr class="normal">
-        <th v-for="(col, i) in columns" :key="`heading_${i}`">
-          {{ col.label }}
+        <th v-for="(col, i) in columns" :key="`heading_${i}`" @click="sort(col.field)" :class="[{ active: currentSortField === col.field}]">
+          <span>{{ col.label }}</span>
+          <cheveron v-show="currentSortField === col.field && currentSortDirection !== 0" :asc="sortDirections[currentSortDirection] === 'asc'"/>
         </th>
       </tr>
     </thead>
     <tbody class="bc-table-body">
-      <tr v-for="(item, i) in data" :key="`row_${i}`" class="normal">
+      <tr v-for="(item, i) in sortedData" :key="`row_${i}`" class="normal">
         <td v-for="(col, i) in columns" :key="`col_${i}`">
           {{ item[col.field] }}
         </td>
@@ -18,8 +19,14 @@
 </template>
 
 <script>
+import { sortBy } from 'lodash'
+import Cheveron from '@/components/Cheveron'
 export default {
   name: "DataTable",
+
+  components: {
+    Cheveron
+  },
 
   props: {
     data: {
@@ -33,14 +40,45 @@ export default {
   },
 
   data() {
-    return {};
+    return {
+      currentSortField: null,
+      currentSortDirection: 0,
+      sortDirections: ['original', 'asc', 'desc']
+    };
+  },
+
+  computed: {
+    sortedData () {
+      if (this.currentSortDirection > 0) {
+        return this.sortDirections[this.currentSortDirection] === 'asc' ? sortBy(this.data, [this.currentSortField]) : sortBy(this.data, [this.currentSortField]).reverse()
+      } else {
+        return this.data
+      }
+    }
+  },
+
+  methods: {
+    sort(field) {
+      if (field === this.currentSortField) {
+        this.currentSortDirection++
+      } else {
+        this.currentSortDirection = 1
+      }
+      
+      if (this.currentSortDirection === 3) {
+        this.currentSortDirection = 0
+      }
+      this.currentSortField = field
+    }
   }
 };
 </script>
 
 <style scoped lang="scss">
+$border-color: #f7f4fa;
+
 table.bc-data-table {
-  border: 1px solid #f7f4fa;
+  border: 1px solid $border-color;
   border-collapse: collapse;
   border-spacing: 0;
 
@@ -53,13 +91,20 @@ table.bc-data-table {
 
   thead.bc-table-header {
     th {
-      border-bottom: 2px solid #f7f4fa;
+      border-bottom: 2px solid $border-color;
       text-align: left;
       text-transform: uppercase;
+      cursor: pointer;
+      position: relative;
+      padding-right: 24px;
+
+      &.active {
+        background-color: #f8f9fc;
+      }
     }
 
     th:not(:last-child) {
-      border-right: 1px solid #f7f4fa;
+      border-right: 1px solid $border-color;
     }
   }
 
