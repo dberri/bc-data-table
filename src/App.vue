@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <DataTable msg="Welcome to Your Vue.js App" />
+    <DataTable :data="payments" :columns="columns" />
   </div>
 </template>
 
@@ -9,8 +9,38 @@ import DataTable from "./components/DataTable.vue";
 
 export default {
   name: "app",
+
   components: {
     DataTable
+  },
+
+  data() {
+    return {
+      columns: [
+        {
+          field: "Name",
+          label: "Name"
+        },
+        {
+          field: "Description",
+          label: "Description"
+        },
+        {
+          field: "Amount",
+          label: "Amount"
+        }
+      ]
+    };
+  },
+
+  computed: {
+    payments() {
+      return this.$store.state.payments;
+    }
+  },
+
+  mounted() {
+    this.$store.dispatch("fetchPayments");
   }
 };
 </script>
@@ -20,8 +50,10 @@ export default {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
+  font-size: 14px;
   color: #2c3e50;
   margin-top: 60px;
+  display: flex;
+  justify-content: center;
 }
 </style>
