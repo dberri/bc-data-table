@@ -2,9 +2,19 @@
   <table class="bc-data-table">
     <thead class="bc-table-header">
       <tr class="normal">
-        <th v-for="(col, i) in columns" :key="`heading_${i}`" @click="sort(col.field)" :class="[{ active: currentSortField === col.field}]">
+        <th
+          v-for="(col, i) in columns"
+          :key="`heading_${i}`"
+          @click="sort(col.field)"
+          :class="[{ active: currentSortField === col.field }]"
+        >
           <span>{{ col.label }}</span>
-          <cheveron v-show="currentSortField === col.field && currentSortDirection !== 0" :asc="sortDirections[currentSortDirection] === 'asc'"/>
+          <cheveron
+            v-show="
+              currentSortField === col.field && currentSortDirection !== 0
+            "
+            :asc="sortDirections[currentSortDirection] === 'asc'"
+          />
         </th>
       </tr>
     </thead>
@@ -19,8 +29,8 @@
 </template>
 
 <script>
-import { sortBy } from 'lodash'
-import Cheveron from '@/components/Cheveron'
+import { sortBy } from "lodash";
+import Cheveron from "@/components/Cheveron";
 export default {
   name: "DataTable",
 
@@ -43,16 +53,18 @@ export default {
     return {
       currentSortField: null,
       currentSortDirection: 0,
-      sortDirections: ['original', 'asc', 'desc']
+      sortDirections: ["original", "asc", "desc"]
     };
   },
 
   computed: {
-    sortedData () {
+    sortedData() {
       if (this.currentSortDirection > 0) {
-        return this.sortDirections[this.currentSortDirection] === 'asc' ? sortBy(this.data, [this.currentSortField]) : sortBy(this.data, [this.currentSortField]).reverse()
+        return this.sortDirections[this.currentSortDirection] === "asc"
+          ? this.sortIt()
+          : this.sortIt().reverse();
       } else {
-        return this.data
+        return this.data;
       }
     }
   },
@@ -60,15 +72,29 @@ export default {
   methods: {
     sort(field) {
       if (field === this.currentSortField) {
-        this.currentSortDirection++
+        this.currentSortDirection++;
       } else {
-        this.currentSortDirection = 1
+        this.currentSortDirection = 1;
       }
-      
+
       if (this.currentSortDirection === 3) {
-        this.currentSortDirection = 0
+        this.currentSortDirection = 0;
       }
-      this.currentSortField = field
+      this.currentSortField = field;
+    },
+
+    sortIt() {
+      if (
+        this.columns.find(item => item.field === this.currentSortField).type ===
+        "date"
+      ) {
+        return sortBy(this.data, [
+          item => {
+            return new Date(item[this.currentSortField]);
+          }
+        ]);
+      }
+      return sortBy(this.data, [this.currentSortField]);
     }
   }
 };

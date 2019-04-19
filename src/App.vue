@@ -28,6 +28,11 @@ export default {
           label: "Description"
         },
         {
+          field: "Date",
+          label: "Date",
+          type: "date"
+        },
+        {
           field: "Amount",
           label: "Amount"
         }
