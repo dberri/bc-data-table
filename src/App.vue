@@ -1,8 +1,6 @@
 <template>
   <div id="app">
-    <DataTable
-      :data="payments"
-      :columns="columns"/>
+    <DataTable :data="payments" :columns="columns" />
   </div>
 </template>
 
@@ -25,7 +23,8 @@ export default {
         },
         {
           field: "Description",
-          label: "Description"
+          label: "Description",
+          edit: true
         },
         {
           field: "Date",

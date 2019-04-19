@@ -19,9 +19,12 @@
       </tr>
     </thead>
     <tbody class="bc-table-body">
-      <tr v-for="(item, i) in sortedData" :key="`row_${i}`" class="normal">
-        <td v-for="(col, i) in columns" :key="`col_${i}`">
-          {{ item[col.field] }}
+      <tr v-for="(item, i) in sortedData" :key="`row_${i}`" class="normal" @mouseover="showByIndex = i" @mouseout="showByIndex = null">
+        <td v-for="(col, j) in columns" :key="`col_${j}`">
+          <span>{{ item[col.field] }}</span>
+          <button v-show="col.edit && showByIndex === i" type="button" class="edit-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><path class="heroicon-ui" d="M6.3 12.3l10-10a1 1 0 0 1 1.4 0l4 4a1 1 0 0 1 0 1.4l-10 10a1 1 0 0 1-.7.3H7a1 1 0 0 1-1-1v-4a1 1 0 0 1 .3-.7zM8 16h2.59l9-9L17 4.41l-9 9V16zm10-2a1 1 0 0 1 2 0v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6c0-1.1.9-2 2-2h6a1 1 0 0 1 0 2H4v14h14v-6z"/></svg>
+          </button>
         </td>
       </tr>
     </tbody>
@@ -53,7 +56,8 @@ export default {
     return {
       currentSortField: null,
       currentSortDirection: 0,
-      sortDirections: ["original", "asc", "desc"]
+      sortDirections: ["original", "asc", "desc"],
+      showByIndex: null
     };
   },
 
@@ -135,8 +139,23 @@ table.bc-data-table {
   }
 
   tbody.bc-table-body {
-    tr:nth-child(even) {
-      background-color: #f7f7f7;
+    tr {
+      &:nth-child(even) {
+        background-color: #f7f7f7;
+      }
+      
+      td {
+      position: relative;
+
+        .edit-btn {
+        position: absolute;
+        top: 2px;
+        right: 0;
+        background: transparent;
+        border:none;
+        cursor: pointer;
+      }
+      }
     }
   }
 }
