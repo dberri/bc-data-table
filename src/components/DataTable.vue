@@ -49,7 +49,10 @@
 
           <div
             v-if="col.edit"
-            :class="['edit-box', { active: editingIndex === i }]"
+            :class="[
+              'edit-box',
+              { active: editingIndex === i && editingField === col.field }
+            ]"
           >
             <button type="button" @click="finishEditing" class="close-btn">
               &times;

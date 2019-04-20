@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <DataTable :data="payments" :columns="columns" />
+    <DataTable :data="payments" :columns="columns" @submit="changePayment" />
   </div>
 </template>
 
@@ -45,7 +45,17 @@ export default {
     }
   },
 
+  methods: {
+    changePayment(e) {
+      // Creates new object so it doesn't interfere with the original data yet
+      const payment = { ...this.payments[e.index] };
+      payment[e.field] = e.content;
+      this.$store.dispatch("updatePayment", payment);
+    }
+  },
+
   mounted() {
+    // this.$store.dispatch("loadPayments");
     this.$store.dispatch("fetchPayments");
   }
 };
