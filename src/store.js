@@ -3,6 +3,14 @@ import Vuex from 'vuex';
 import axios from 'axios';
 import db from './db';
 
+function uploadToFirebase(data) {
+  data.forEach((item) => {
+    db.collection('payments')
+      .doc(item.ID)
+      .set(item);
+  });
+}
+
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -22,24 +30,6 @@ export default new Vuex.Store({
   },
 
   actions: {
-    loadPayments: () => {
-      axios.get('/payments.json').then((response) => {
-        response.data.forEach((item) => {
-          db.collection('payments')
-            .doc(item.ID)
-            .set(item);
-        });
-      });
-    },
-
-    fetchPayments: ({ commit }) => {
-      db.collection('payments')
-        .get()
-        .then((querySnapshots) => {
-          commit('STORE_PAYMENTS', querySnapshots.docs.map(doc => doc.data()));
-        });
-    },
-
     updatePayment: ({ commit }, payload) => {
       db.collection('payments')
         .doc(payload.ID)
@@ -47,6 +37,17 @@ export default new Vuex.Store({
         .then(() => {
           commit('UPDATE_PAYMENT', payload);
         });
+    },
+
+    async fetchPayments({ commit }) {
+      const querySnapshots = await db.collection('payments').get();
+      if (querySnapshots.docs.length) {
+        commit('STORE_PAYMENTS', querySnapshots.docs.map(doc => doc.data()));
+      } else {
+        const { data } = await axios.get('/payments.json');
+        commit('STORE_PAYMENTS', data);
+        uploadToFirebase(data);
+      }
     },
   },
 });
