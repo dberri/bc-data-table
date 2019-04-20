@@ -29,7 +29,7 @@
         <td v-for="(col, j) in columns" :key="`col_${j}`">
           <span>{{ item[col.field] }}</span>
           <button
-            v-show="col.edit && showByIndex === i"
+            v-show="col.edit && showEditButton(i)"
             type="button"
             class="edit-btn"
             @click="edit(i, col.field)"
@@ -163,6 +163,15 @@ export default {
       this.editingContent = null;
       this.editingIndex = null;
       this.editingField = null;
+    },
+
+    showEditButton(index) {
+      var w = Math.max(
+        document.documentElement.clientWidth,
+        window.innerWidth || 0
+      );
+
+      return this.showByIndex === index || w < 568;
     }
   }
 };
