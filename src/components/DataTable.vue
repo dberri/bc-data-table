@@ -1,71 +1,79 @@
 <template>
-  <table class="bc-data-table">
-    <thead class="bc-table-header">
-      <tr class="normal">
-        <th
-          v-for="(col, i) in columns"
-          :key="`heading_${i}`"
-          @click="sort(col.field)"
-          :class="[{ active: currentSortField === col.field }]"
+  <div class="responsive-table">
+    <table class="bc-data-table">
+      <thead class="bc-table-header">
+        <tr class="normal">
+          <th
+            v-for="(col, i) in columns"
+            :key="`heading_${i}`"
+            @click="sort(col.field)"
+            :class="[{ active: currentSortField === col.field }]"
+          >
+            <span>{{ col.label }}</span>
+            <cheveron
+              v-show="
+                currentSortField === col.field && currentSortDirection !== 0
+              "
+              :asc="sortDirections[currentSortDirection] === 'asc'"
+            />
+          </th>
+        </tr>
+        <tr class="search-row">
+          <td v-for="i in columns.length" :key="`search_${i}`">
+            <input type="text" v-model="search[i - 1]" />
+          </td>
+        </tr>
+      </thead>
+      <tbody class="bc-table-body">
+        <tr
+          v-for="(item, i) in sortedData"
+          :key="`row_${i}`"
+          class="normal"
+          @mouseover="showByIndex = i"
+          @mouseout="showByIndex = null"
         >
-          <span>{{ col.label }}</span>
-          <cheveron
-            v-show="
-              currentSortField === col.field && currentSortDirection !== 0
-            "
-            :asc="sortDirections[currentSortDirection] === 'asc'"
-          />
-        </th>
-      </tr>
-    </thead>
-    <tbody class="bc-table-body">
-      <tr
-        v-for="(item, i) in sortedData"
-        :key="`row_${i}`"
-        class="normal"
-        @mouseover="showByIndex = i"
-        @mouseout="showByIndex = null"
-      >
-        <td v-for="(col, j) in columns" :key="`col_${j}`">
-          <span>{{ item[col.field] }}</span>
-          <button
-            v-show="col.edit && showEditButton(i)"
-            type="button"
-            class="edit-btn"
-            @click="edit(i, col.field)"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              width="18"
-              height="18"
+          <td v-for="(col, j) in columns" :key="`col_${j}`">
+            <span>{{ item[col.field] }}</span>
+            <button
+              v-show="col.edit && showEditButton(i)"
+              type="button"
+              class="edit-btn"
+              @click="edit(i, col.field)"
             >
-              <path
-                class="heroicon-ui"
-                d="M6.3 12.3l10-10a1 1 0 0 1 1.4 0l4 4a1 1 0 0 1 0 1.4l-10 10a1 1 0 0 1-.7.3H7a1 1 0 0 1-1-1v-4a1 1 0 0 1 .3-.7zM8 16h2.59l9-9L17 4.41l-9 9V16zm10-2a1 1 0 0 1 2 0v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6c0-1.1.9-2 2-2h6a1 1 0 0 1 0 2H4v14h14v-6z"
-              />
-            </svg>
-          </button>
-
-          <div
-            v-if="col.edit"
-            :class="[
-              'edit-box',
-              { active: editingIndex === i && editingField === col.field }
-            ]"
-          >
-            <button type="button" @click="finishEditing" class="close-btn">
-              &times;
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="18"
+                height="18"
+              >
+                <path
+                  class="heroicon-ui"
+                  d="M6.3 12.3l10-10a1 1 0 0 1 1.4 0l4 4a1 1 0 0 1 0 1.4l-10 10a1 1 0 0 1-.7.3H7a1 1 0 0 1-1-1v-4a1 1 0 0 1 .3-.7zM8 16h2.59l9-9L17 4.41l-9 9V16zm10-2a1 1 0 0 1 2 0v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6c0-1.1.9-2 2-2h6a1 1 0 0 1 0 2H4v14h14v-6z"
+                />
+              </svg>
             </button>
-            <form action="#" method="POST" @submit.prevent="submit">
-              <input type="text" v-model="editingContent" />
-              <button type="submit">Save</button>
-            </form>
-          </div>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+
+            <div
+              v-if="col.edit"
+              :class="[
+                'edit-box',
+                { active: editingIndex === i && editingField === col.field }
+              ]"
+            >
+              <button type="button" @click="finishEditing" class="close-btn">
+                &times;
+              </button>
+              <form action="#" method="POST" @submit.prevent="submit">
+                <!-- <input type="text" v-model="editingContent" /> -->
+                <textarea rows="4" v-model="editingContent"></textarea>
+                <button type="submit">Save</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </template>
 
 <script>
@@ -99,7 +107,9 @@ export default {
 
       editingIndex: null,
       editingField: null,
-      editingContent: null
+      editingContent: null,
+
+      search: new Array(this.columns.length).fill("")
     };
   },
 
@@ -179,6 +189,13 @@ export default {
 
 <style scoped lang="scss">
 $border-color: #f7f4fa;
+$primary-color: #1691a8;
+$secondary-color: #e4f3f6;
+$text-color: #405f64;
+
+.responsive-table {
+  overflow-x: auto;
+}
 
 table.bc-data-table {
   * {
@@ -188,6 +205,8 @@ table.bc-data-table {
   border: 1px solid $border-color;
   border-collapse: collapse;
   border-spacing: 0;
+  min-width: 768px;
+  color: $text-color;
 
   tr.normal {
     td,
@@ -198,27 +217,45 @@ table.bc-data-table {
 
   thead.bc-table-header {
     th {
-      border-bottom: 2px solid $border-color;
+      border: 1px solid $primary-color;
       text-align: left;
       text-transform: uppercase;
       cursor: pointer;
       position: relative;
       padding-right: 24px;
+      background-color: $primary-color;
+      color: #fff;
 
       &.active {
-        background-color: #f8f9fc;
+        background-color: darken($primary-color, 5%);
+        border: 1px solid darken($primary-color, 5%);
       }
     }
 
     th:not(:last-child) {
-      border-right: 1px solid $border-color;
+      border-right: 1px solid $primary-color;
+    }
+
+    tr.search-row {
+      background-color: lighten($primary-color, 5%);
+      td {
+        padding: 0.5rem;
+
+        input {
+          padding: 0.4rem 0.75rem;
+          width: 100%;
+          border: 1px solid $border-color;
+        }
+      }
     }
   }
 
   tbody.bc-table-body {
     tr {
+      background-color: #fff;
+
       &:nth-child(even) {
-        background-color: #f7f7f7;
+        background-color: $secondary-color;
       }
 
       td {
@@ -239,11 +276,15 @@ table.bc-data-table {
           position: absolute;
           top: 0;
           right: 0;
-          padding: 2rem 1rem 1rem 1rem;
           min-width: 50%;
           border: 1px solid darken($border-color, 5%);
           background-color: #fff;
           box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.05);
+          padding: 1rem 0.5rem 0.5rem 0.5rem;
+
+          @media screen and (min-width: 568px) {
+            padding: 2rem 1rem 1rem 1rem;
+          }
 
           .close-btn {
             background: none;
@@ -258,11 +299,12 @@ table.bc-data-table {
           }
 
           form {
-            input {
+            textarea {
               width: 100%;
               display: block;
               padding: 0.5rem;
               margin-bottom: 0.5rem;
+              border: 1px solid $border-color;
             }
 
             button[type="submit"] {

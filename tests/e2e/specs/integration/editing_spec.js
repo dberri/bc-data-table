@@ -21,10 +21,10 @@ describe('Tests editability', () => {
     cy.get('tbody tr:first-child td:nth-child(2)').contains(description);
 
     cy.get('.edit-box.active')
-      .find('input')
+      .find('textarea')
       .should('have.value', description);
 
-    cy.get('.edit-box.active input').type(sentence);
+    cy.get('.edit-box.active textarea').type(sentence);
     cy.get('.edit-box.active button[type=submit]').click();
     cy.contains(`${description}${sentence}`, { timeout: 10000 });
   });
