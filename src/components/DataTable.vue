@@ -19,14 +19,18 @@
           </th>
         </tr>
         <tr class="search-row">
-          <td v-for="i in columns.length" :key="`search_${i}`">
-            <input type="text" v-model="search[i - 1]" />
+          <td v-for="(col, i) in columns" :key="`search_${i}`">
+            <input
+              v-if="col.searchable"
+              type="text"
+              v-model="searchContent[i]"
+            />
           </td>
         </tr>
       </thead>
       <tbody class="bc-table-body">
         <tr
-          v-for="(item, i) in sortedData"
+          v-for="(item, i) in filteredData"
           :key="`row_${i}`"
           class="normal"
           @mouseover="showByIndex = i"
@@ -109,7 +113,7 @@ export default {
       editingField: null,
       editingContent: null,
 
-      search: new Array(this.columns.length).fill("")
+      searchContent: new Array(this.columns.length).fill("")
     };
   },
 
@@ -122,6 +126,12 @@ export default {
       } else {
         return this.data;
       }
+    },
+
+    filteredData() {
+      return this.sortedData.filter(row => {
+        return this.search(row);
+      });
     }
   },
 
@@ -182,6 +192,21 @@ export default {
       );
 
       return this.showByIndex === index || w < 568;
+    },
+
+    search(row, field, search) {
+      let flag = true;
+      this.searchContent.forEach((search, i) => {
+        if (search !== "" && this.columns[i].searchable) {
+          flag =
+            flag &&
+            String(row[this.columns[i].field])
+              .toLowerCase()
+              .includes(String(search).toLowerCase());
+        }
+      });
+
+      return flag;
     }
   }
 };

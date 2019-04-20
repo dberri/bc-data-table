@@ -19,21 +19,25 @@ export default {
       columns: [
         {
           field: "Name",
-          label: "Name"
+          label: "Name",
+          searchable: true
         },
         {
           field: "Description",
           label: "Description",
-          edit: true
+          edit: true,
+          searchable: true
         },
         {
           field: "Date",
           label: "Date",
-          type: "date"
+          type: "date",
+          searchable: true
         },
         {
           field: "Amount",
-          label: "Amount"
+          label: "Amount",
+          searchable: true
         }
       ]
     };
