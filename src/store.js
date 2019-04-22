@@ -25,7 +25,7 @@ export default new Vuex.Store({
 
     UPDATE_PAYMENT: (state, payload) => {
       const idx = state.payments.findIndex(item => item.ID === payload.ID);
-      state.payments[idx] = payload;
+      Vue.set(state.payments, idx, payload);
     },
   },
 
