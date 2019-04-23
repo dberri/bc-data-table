@@ -2,7 +2,7 @@
 
 [Demo](http://bc-data-table.s3-website-us-west-2.amazonaws.com)
 
-It was deployed to an AWS S3 Bucket set as a static website host using the aws-cli.
+It was deployed to an AWS S3 Bucket set as a static website host using the aws-cli. It uses Firebase's Firestore cloud as its database.
 
 ## Approach
 
