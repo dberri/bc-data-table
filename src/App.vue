@@ -31,13 +31,11 @@ export default {
         {
           field: "Date",
           label: "Date",
-          type: "date",
-          searchable: true
+          type: "date"
         },
         {
           field: "Amount",
-          label: "Amount",
-          searchable: true
+          label: "Amount"
         }
       ]
     };
