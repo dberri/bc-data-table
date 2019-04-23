@@ -49,9 +49,9 @@ This data table has the following functionalities:
 
 ```json
 {
-  index,
-  field,
-  content
+  "index": 0,
+  "field": "Description",
+  "content": "dapibus ligula. Aliquam erat"
 }
 ```
 
