@@ -20,6 +20,7 @@ export default {
         {
           field: "Name",
           label: "Name",
+          edit: true,
           searchable: true
         },
         {
