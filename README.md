@@ -59,7 +59,6 @@ This data table has the following functionalities:
 - `field` is the column edited by the user
 - `content` is the new content for that field
 
-SCRATCH THAT -> THIS WAS MEANT FOR A JOB APPLICATION BUT I THINK IT TURNED OUT OT BE A COOL PROJECT, SO I'M SHARING IT HERE
 
 ## Project setup
 
